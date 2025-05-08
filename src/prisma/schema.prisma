@@ -1,0 +1,70 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Role {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  description String?
+  level       Int      @default(0) // Hierarchy level (0 = Admin, higher numbers = lower in hierarchy)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  users       User[]
+}
+
+model User {
+  id             Int      @id @default(autoincrement())
+  email          String   @unique
+  password       String
+  firstName      String
+  lastName       String
+  isActive       Boolean  @default(true)
+  roleId         Int
+  role           Role     @relation(fields: [roleId], references: [id])
+  parentId       Int?
+  parent         User?    @relation("UserHierarchy", fields: [parentId], references: [id])
+  children       User[]   @relation("UserHierarchy")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  assignedLeads  Lead[]   @relation("AssignedLeads")
+  createdLeads   Lead[]   @relation("CreatedLeads")
+  leadStatusLogs LeadStatusLog[]
+}
+
+model Lead {
+  id             Int      @id @default(autoincrement())
+  name           String
+  email          String?
+  phone          String?
+  company        String?
+  description    String?  @db.Text
+  status         String   @default("new") // new, contacted, qualified, proposal, negotiation, closed_won, closed_lost
+  assignedToId   Int?
+  assignedTo     User?    @relation("AssignedLeads", fields: [assignedToId], references: [id])
+  createdById    Int
+  createdBy      User     @relation("CreatedLeads", fields: [createdById], references: [id])
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  statusLogs     LeadStatusLog[]
+}
+
+model LeadStatusLog {
+  id        Int      @id @default(autoincrement())
+  leadId    Int
+  lead      Lead     @relation(fields: [leadId], references: [id])
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  oldStatus String?
+  newStatus String
+  notes     String?  @db.Text
+  createdAt DateTime @default(now())
+}
+
