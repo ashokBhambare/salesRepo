@@ -64,17 +64,20 @@ The database schema is defined using Prisma and includes the following models:
 ## Setup and Installation
 
 1. Clone the repository:
+
    ```
    git clone https://github.com/ashokBhambare/salesRepo.git
    cd salesRepo
    ```
 
 2. Install dependencies:
+
    ```
    npm install
    ```
 
 3. Create a `.env` file in the root directory with the following variables:
+
    ```
    NODE_ENV=development
    PORT=3000
@@ -86,11 +89,13 @@ The database schema is defined using Prisma and includes the following models:
    ```
 
 4. Set up the database:
+
    ```
    npx prisma migrate dev
    ```
 
 5. Seed the database with initial data:
+
    ```
    npm run prisma:seed
    ```
@@ -118,3 +123,4 @@ The database schema is defined using Prisma and includes the following models:
 
 ISC
 
+External commit
